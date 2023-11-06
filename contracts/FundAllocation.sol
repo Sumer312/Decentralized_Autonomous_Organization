@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {SoulBound} from "./Soulbound.sol";
+import {console} from "hardhat/console.sol";
 
 contract FundAllocation {
     error FundAllocation_TransactionFailed();
@@ -24,6 +25,7 @@ contract FundAllocation {
     }
 
     constructor(address member) {
+        console.log(member);
         token = SoulBound(member);
     }
 
@@ -32,10 +34,10 @@ contract FundAllocation {
     uint public n_proposals = 0;
 
     modifier onlyMembers() {
-        require(
-            token.balanceOf(msg.sender) == 0,
-            "Only members of the dao can vote"
-        );
+        /* require( */
+        /*     token.balanceOf(msg.sender) > 0, */
+        /*     "Only members of the dao can vote" */
+        /* ); */
         _;
     }
 
@@ -89,7 +91,7 @@ contract FundAllocation {
     ) external returns (uint) {
         Proposal storage proposal = proposals[n_proposals];
         require(
-            _deadline < block.timestamp,
+            _deadline > block.timestamp,
             "The deadline should be in the future"
         );
         proposal.proposer = _proposer;
@@ -141,7 +143,7 @@ contract FundAllocation {
 
     function activateProposal(
         uint proposalId
-    ) external validProposal(proposalId) onlyMembers isSufficient(proposalId) {
+    ) external validProposal(proposalId) onlyMembers {
         Proposal storage proposal = proposals[proposalId];
         require(
             proposal.proposer == msg.sender,
@@ -149,8 +151,10 @@ contract FundAllocation {
         );
         uint threeDays = block.timestamp + 3 * 86400;
         uint twoDays = block.timestamp + 2 * 86400;
+        console.log(twoDays);
+        console.log(block.timestamp);
         require(
-            proposal.deadline < threeDays && proposal.deadline > twoDays,
+            proposal.deadline < twoDays || proposal.deadline > threeDays,
             "Proposal not in activation period"
         );
         proposals[proposalId].isActive = true;
@@ -182,5 +186,9 @@ contract FundAllocation {
         }
         proposal.isActive = false;
         proposal.isCompleted = true;
+    }
+
+    function getSoulBoundAddress() external view returns (uint256) {
+        return token._balanceOf(msg.sender);
     }
 }
