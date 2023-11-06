@@ -7,14 +7,10 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 31337,
       allowUnlimitedContractSize: true,
-      gas: 2100000,
-      gasPrice: 8000000000,
     },
     localhost: {
       chainId: 31337,
       allowUnlimitedContractSize: true,
-      gas: 2100000,
-      gasPrice: 8000000000,
     }
   },
   solidity: "0.8.20",

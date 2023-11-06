@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {SoulBound} from "./Soulbound.sol";
+import {SoulBound} from "./SoulBound.sol";
 
 contract Voting {
     SoulBound token;

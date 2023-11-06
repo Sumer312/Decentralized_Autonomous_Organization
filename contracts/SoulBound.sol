@@ -18,6 +18,8 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
     ) ERC721("SoulBound", "SBT") Ownable(initialOwner) {}
 
     function safeMint(address to, string memory uri) public onlyOwner {
+        console.log(msg.sender);
+        console.log(to);
         require(
             balanceOf(to) == 0,
             "SBT can only be minted once for one address"
@@ -64,7 +66,7 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
         _burn(tokenId);
     }
 
-    function _balanceOf(address owner) public view onlyOwner returns (uint256) {
-        return balanceOf(owner);
+    function testing() external pure returns (uint) {
+        return 69;
     }
 }

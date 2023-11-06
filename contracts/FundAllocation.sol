@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {SoulBound} from "./Soulbound.sol";
+import {SoulBound} from "./SoulBound.sol";
 import {console} from "hardhat/console.sol";
 
 contract FundAllocation {
@@ -24,9 +24,8 @@ contract FundAllocation {
         address[] voters;
     }
 
-    constructor(address member) {
-        console.log(member);
-        token = SoulBound(member);
+    constructor(address member) payable {
+        token = new SoulBound(member);
     }
 
     mapping(uint => Proposal) public proposals;
@@ -34,10 +33,12 @@ contract FundAllocation {
     uint public n_proposals = 0;
 
     modifier onlyMembers() {
-        /* require( */
-        /*     token.balanceOf(msg.sender) > 0, */
-        /*     "Only members of the dao can vote" */
-        /* ); */
+        console.log(msg.sender);
+        console.log(token.ownerOf(123));
+        require(
+            token.balanceOf(msg.sender) > 0,
+            "Only members of the dao can vote"
+        );
         _;
     }
 
@@ -186,9 +187,5 @@ contract FundAllocation {
         }
         proposal.isActive = false;
         proposal.isCompleted = true;
-    }
-
-    function getSoulBoundAddress() external view returns (uint256) {
-        return token._balanceOf(msg.sender);
     }
 }

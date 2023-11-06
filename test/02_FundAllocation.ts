@@ -9,20 +9,15 @@ describe("Testing", function() {
     const fa = await ethers.getContractFactory("FundAllocation");
     const accounts = await ethers.getSigners();
     const soul = await sbt.deploy(accounts[0].address);
-    await soul.safeMint(accounts[0].address, "123");
-    console.log(await soul.balanceOf(accounts[0].address));
+    await soul.safeMint(accounts[0].address, 123);
     const fund = await fa.deploy(accounts[0].address);
     const proposal = await fund.createProposal(accounts[0].address, 2, "test", "proposal for testing", Math.floor((new Date().getTime()) / 1000 + 2 * oneDay), accounts[1].address);
-    try {
-      const token = await fund.getSoulBoundAddress();
-      console.log(token);
-    } catch (error) {
-      console.trace(error);
-    }
-    /* await fund.voteProposalYes(accounts[2].address, await proposal.value); */
-    /* await fund.voteProposalYes(accounts[2].address, await proposal.value); */
-    /* await fund.voteProposalNo(accounts[4].address, await proposal.value); */
-    /* await fund.voteProposalNo(accounts[3].address, await proposal.value); */
+    const token = await fund.activateProposal(await proposal.value);
+    console.log(token);
+    await fund.voteProposalYes(accounts[2].address, await proposal.value);
+    await fund.voteProposalYes(accounts[2].address, await proposal.value);
+    await fund.voteProposalNo(accounts[4].address, await proposal.value);
+    await fund.voteProposalNo(accounts[3].address, await proposal.value);
   })
 
   /*   it("activate proposal", async function() { */
