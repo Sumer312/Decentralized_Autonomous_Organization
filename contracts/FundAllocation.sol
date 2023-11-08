@@ -25,7 +25,7 @@ contract FundAllocation {
     }
 
     constructor(address member) payable {
-        token = new SoulBound(member);
+        token = SoulBound(member);
     }
 
     mapping(uint => Proposal) public proposals;
@@ -101,11 +101,6 @@ contract FundAllocation {
         proposal.title = _title;
         proposal.description = _description;
         proposal.recepient = _recepient;
-        proposal.isActive = false;
-        proposal.isCompleted = false;
-        proposal.yesCount = 0;
-        proposal.noCount = 0;
-        proposal.totalVoters = 0;
         n_proposals++;
         return n_proposals - 1;
     }
