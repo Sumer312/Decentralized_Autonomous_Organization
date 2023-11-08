@@ -15,7 +15,7 @@ contract FundAllocation {
         string description;
         uint deadline;
         uint amountCollected;
-        address payable recepient;
+        address recepient;
         bool isActive;
         bool isCompleted;
         uint yesCount;
@@ -30,7 +30,7 @@ contract FundAllocation {
 
     mapping(uint => Proposal) public proposals;
 
-    uint public n_proposals = 0;
+    uint public n_proposals;
 
     modifier onlyMembers() {
         console.log(msg.sender);
@@ -76,7 +76,7 @@ contract FundAllocation {
 
     modifier isSufficient(uint proposalId) {
         require(
-            address(this).balance < proposals[proposalId].amount,
+            address(this).balance >= proposals[proposalId].amount,
             "This DAO does not have sufficient funds"
         );
         _;
@@ -88,16 +88,16 @@ contract FundAllocation {
         string calldata _title,
         string calldata _description,
         uint _deadline,
-        address payable _recepient
+        address _recepient
     ) external returns (uint) {
-        Proposal storage proposal = proposals[n_proposals];
-        require(
-            _deadline > block.timestamp,
+    require(
+            block.timestamp + _deadline > block.timestamp,
             "The deadline should be in the future"
         );
+        Proposal storage proposal = proposals[n_proposals];
         proposal.proposer = _proposer;
         proposal.amount = _amount;
-        proposal.deadline = _deadline;
+        proposal.deadline = block.timestamp + _deadline; 
         proposal.title = _title;
         proposal.description = _description;
         proposal.recepient = _recepient;
