@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {SoulBound} from "./SoulBound.sol";
 
 contract Voting {
-    SoulBound token;
+    SoulBound private token;
     struct Proposal {
         address proposer;
         string title;
@@ -15,7 +15,7 @@ contract Voting {
         uint totalVoters;
         bool isActive;
         bool isCompleted;
-        address[] voters;
+        mapping(address => bool) voters;
     }
     Proposal[] public proposals;
 
@@ -34,14 +34,10 @@ contract Voting {
     }
 
     modifier newVoter(uint proposalId, address voter) {
-        bool flag = true;
-        for (uint i = 0; i < n_proposals; i++) {
-            if (proposals[proposalId].voters[i] == voter) {
-                flag = false;
-                break;
-            }
-        }
-        require(flag, "Only members of the DAO can vote");
+        require(
+            proposals[proposalId].voters[voter] == false,
+            "You have already cast your vote for this proposal"
+        );
         _;
     }
 
@@ -68,11 +64,6 @@ contract Voting {
         proposal.proposer = _proposer;
         proposal.title = _title;
         proposal.description = _description;
-        proposal.totalVoters = 0;
-        proposal.yesCount = 0;
-        proposal.noCount = 0;
-        proposal.isActive = false;
-        proposal.isCompleted = false;
         n_proposals++;
         return n_proposals - 1;
     }
@@ -89,7 +80,7 @@ contract Voting {
     {
         Proposal storage proposal = proposals[proposalId];
         proposal.yesCount++;
-        proposal.voters.push(voter);
+        proposal.voters[voter] = true;
         proposal.totalVoters++;
     }
 
@@ -106,7 +97,7 @@ contract Voting {
         Proposal storage proposal = proposals[proposalId];
         proposal.noCount++;
         proposal.totalVoters++;
-        proposal.voters.push(voter);
+        proposal.voters[voter] = true;
     }
 
     function activateProposal(

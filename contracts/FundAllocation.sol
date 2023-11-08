@@ -7,7 +7,7 @@ import {console} from "hardhat/console.sol";
 contract FundAllocation {
     error FundAllocation_TransactionFailed();
 
-    SoulBound token;
+    SoulBound private token;
     struct Proposal {
         address proposer;
         uint amount;
@@ -21,7 +21,7 @@ contract FundAllocation {
         uint yesCount;
         uint noCount;
         uint totalVoters;
-        address[] voters;
+        mapping(address => bool) voters;
     }
 
     constructor(address member) payable {
@@ -52,15 +52,8 @@ contract FundAllocation {
     }
 
     modifier newVoter(address voter, uint proposalId) {
-        bool flag = false;
-        for (uint i = 0; i < proposals[proposalId].totalVoters; i++) {
-            if (proposals[proposalId].voters[i] == voter) {
-                flag = true;
-                break;
-            }
-        }
         require(
-            flag == false,
+            proposals[proposalId].voters[voter] == false,
             "You have already cast your vote on this proposal"
         );
         _;
@@ -118,7 +111,7 @@ contract FundAllocation {
         Proposal storage proposal = proposals[proposalId];
         proposal.totalVoters++;
         proposal.yesCount++;
-        proposal.voters.push(voter);
+        proposal.voters[voter] = true;
     }
 
     function voteProposalNo(
@@ -134,7 +127,7 @@ contract FundAllocation {
         Proposal storage proposal = proposals[proposalId];
         proposal.totalVoters++;
         proposal.noCount++;
-        proposal.voters.push(voter);
+        proposal.voters[voter] = true;
     }
 
     function activateProposal(
