@@ -65,8 +65,4 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
     function revoke(uint tokenId) external {
         _burn(tokenId);
     }
-
-    function testing() external pure returns (uint) {
-        return 69;
-    }
 }

@@ -3,9 +3,20 @@ pragma solidity ^0.8.20;
 
 import {SoulBound} from "./SoulBound.sol";
 import {console} from "hardhat/console.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract FundAllocation {
     error FundAllocation_TransactionFailed();
+    error FundAllocation_NotAMember();
+    error FundAllocation_InsufficientFunds();
+    error FundAllocation_InvalidProposal();
+    error FundAllocation_InactiveProposal();
+    error FundAllocation_AlreadyVoted();
+
+    enum Vote {
+        yes,
+        no
+    }
 
     SoulBound private token;
     struct Proposal {
@@ -28,50 +39,49 @@ contract FundAllocation {
         token = SoulBound(member);
     }
 
+    receive() external payable {
+        console.log(address(this).balance);
+    }
+
     mapping(uint => Proposal) public proposals;
 
     uint public n_proposals = 0;
 
     modifier onlyMembers() {
-        console.log(msg.sender);
-        console.log(token.ownerOf(123));
-        require(
-            token.balanceOf(msg.sender) > 0,
-            "Only members of the dao can vote"
-        );
+        if (token.balanceOf(msg.sender) <= 0) {
+            revert FundAllocation_NotAMember();
+        }
         _;
     }
 
     modifier validProposal(uint proposalId) {
-        require(proposalId < n_proposals, "Proposal Id not found");
-        require(
-            proposals[proposalId].deadline > block.timestamp,
-            "The deadline of this proposal has already been passed"
-        );
+        if (
+            proposalId >= n_proposals ||
+            proposals[proposalId].deadline > block.timestamp
+        ) {
+            revert FundAllocation_InvalidProposal();
+        }
         _;
     }
 
     modifier newVoter(address voter, uint proposalId) {
-        require(
-            proposals[proposalId].voters[voter] == false,
-            "You have already cast your vote on this proposal"
-        );
+        if (proposals[proposalId].voters[voter] == true) {
+            revert FundAllocation_AlreadyVoted();
+        }
         _;
     }
 
     modifier activeProposal(uint proposalId) {
-        require(
-            proposals[proposalId].isActive == true,
-            "This Proposal is not active"
-        );
+        if (proposals[proposalId].isActive == false) {
+            revert FundAllocation_InactiveProposal();
+        }
         _;
     }
 
     modifier isSufficient(uint proposalId) {
-        require(
-            address(this).balance < proposals[proposalId].amount,
-            "This DAO does not have sufficient funds"
-        );
+        if (address(this).balance <= proposals[proposalId].amount) {
+            revert FundAllocation_InsufficientFunds();
+        }
         _;
     }
 
@@ -98,9 +108,10 @@ contract FundAllocation {
         return n_proposals - 1;
     }
 
-    function voteProposalYes(
+    function voteProposal(
         address voter,
-        uint proposalId
+        uint proposalId,
+        Vote vote
     )
         external
         validProposal(proposalId)
@@ -110,24 +121,16 @@ contract FundAllocation {
     {
         Proposal storage proposal = proposals[proposalId];
         proposal.totalVoters++;
-        proposal.yesCount++;
         proposal.voters[voter] = true;
+        if (vote == Vote.yes) {
+            proposal.yesCount++;
+        } else if (vote == Vote.no) {
+            proposal.noCount++;
+        }
     }
 
-    function voteProposalNo(
-        address voter,
-        uint proposalId
-    )
-        external
-        validProposal(proposalId)
-        newVoter(voter, proposalId)
-        activeProposal(proposalId)
-        onlyMembers
-    {
-        Proposal storage proposal = proposals[proposalId];
-        proposal.totalVoters++;
-        proposal.noCount++;
-        proposal.voters[voter] = true;
+    function numberOfVoters(uint proposalId) external view returns (uint) {
+        return proposals[proposalId].totalVoters;
     }
 
     function activateProposal(
@@ -158,6 +161,7 @@ contract FundAllocation {
         activeProposal(proposalId)
         isSufficient(proposalId)
     {
+        console.log(address(this).balance);
         require(
             block.timestamp >= proposals[proposalId].deadline,
             "Deadline not reached yet"
@@ -169,7 +173,7 @@ contract FundAllocation {
         Proposal storage proposal = proposals[proposalId];
         (bool success, ) = payable(proposal.recepient).call{
             value: proposal.amount
-        }("");
+        }("no");
         if (!success) {
             revert FundAllocation_TransactionFailed();
         }
