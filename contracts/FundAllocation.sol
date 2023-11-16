@@ -47,8 +47,15 @@ contract FundAllocation {
 
     uint public n_proposals = 0;
 
-    modifier onlyMembers() {
+    modifier onlyMembers1() {
         if (token.balanceOf(msg.sender) <= 0) {
+            revert FundAllocation_NotAMember();
+        }
+        _;
+    }
+
+    modifier onlyMembers2(address voter) {
+        if (token.balanceOf(voter) <= 0) {
             revert FundAllocation_NotAMember();
         }
         _;
@@ -57,7 +64,8 @@ contract FundAllocation {
     modifier validProposal(uint proposalId) {
         if (
             proposalId >= n_proposals ||
-            proposals[proposalId].deadline > block.timestamp
+            proposals[proposalId].deadline < block.timestamp ||
+            proposals[proposalId].isCompleted == true
         ) {
             revert FundAllocation_InvalidProposal();
         }
@@ -111,16 +119,18 @@ contract FundAllocation {
     function voteProposal(
         address voter,
         uint proposalId,
-        Vote vote
+        bool flag
     )
         external
+        onlyMembers1
+        onlyMembers2(voter)
         validProposal(proposalId)
         newVoter(voter, proposalId)
         activeProposal(proposalId)
-        onlyMembers
     {
         Proposal storage proposal = proposals[proposalId];
         proposal.totalVoters++;
+        Vote vote = flag == true ? Vote.yes : Vote.no;
         proposal.voters[voter] = true;
         if (vote == Vote.yes) {
             proposal.yesCount++;
@@ -135,7 +145,7 @@ contract FundAllocation {
 
     function activateProposal(
         uint proposalId
-    ) external validProposal(proposalId) onlyMembers {
+    ) external validProposal(proposalId) onlyMembers1 {
         Proposal storage proposal = proposals[proposalId];
         require(
             proposal.proposer == msg.sender,
@@ -157,20 +167,24 @@ contract FundAllocation {
     )
         external
         validProposal(proposalId)
-        onlyMembers
+        onlyMembers1
         activeProposal(proposalId)
         isSufficient(proposalId)
     {
         console.log(address(this).balance);
-        require(
-            block.timestamp >= proposals[proposalId].deadline,
-            "Deadline not reached yet"
-        );
+        /* require( */
+        /*     block.timestamp >= proposals[proposalId].deadline, */
+        /*     "Deadline not reached yet" */
+        /* ); */
         require(
             msg.sender == proposals[proposalId].proposer,
             "Only proposer can filalize the proposal"
         );
         Proposal storage proposal = proposals[proposalId];
+        require(
+            proposal.yesCount > proposal.noCount,
+            "Not enough members accepted the proposal"
+        );
         (bool success, ) = payable(proposal.recepient).call{
             value: proposal.amount
         }("no");
