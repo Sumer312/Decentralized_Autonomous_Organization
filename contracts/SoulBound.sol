@@ -8,9 +8,9 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {console} from "hardhat/console.sol";
 
 contract SoulBound is ERC721, ERC721URIStorage, Ownable {
-    uint256 private _nextTokenId;
-    mapping(address => string) private _tokenDepartments;
-    mapping(string => bool) private _allDepartments;
+    uint256 private nextTokenId;
+    mapping(address => string) private TokenDepartment;
+    mapping(string => bool) private AllDepartments;
 
     event Attest(address to, uint tokenId);
     event Revoke(address to, uint tokenId);
@@ -18,12 +18,12 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
     constructor(
         address initialOwner
     ) ERC721("SoulBound", "SBT") Ownable(initialOwner) {
-      _allDepartments["IT"] = true;
-      _allDepartments["CIVIL"] = true;
-      _allDepartments["CSE"] = true;
-      _allDepartments["MECH"] = true;
-      _allDepartments["ECE"] = true;
-      _allDepartments["AIML"] = true;
+        AllDepartments["IT"] = true;
+        AllDepartments["CIVIL"] = true;
+        AllDepartments["CSE"] = true;
+        AllDepartments["MECH"] = true;
+        AllDepartments["ECE"] = true;
+        AllDepartments["AIML"] = true;
     }
 
     function safeMint(
@@ -31,27 +31,28 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
         string memory uri,
         string memory department
     ) public onlyOwner {
-        require(
-          _allDepartments[department] == true,
-            "No such department"
-        );
+        require(AllDepartments[department] == true, "No such department");
         require(
             balanceOf(to) == 0,
             "SBT can only be minted once for one address"
         );
-        uint256 tokenId = _nextTokenId++;
+        uint256 tokenId = nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
-        _tokenDepartments[to] = department;
+        TokenDepartment[to] = department;
     }
 
-    function returnDepartment(address voter) external view returns (string memory) {
-        require(
-            balanceOf(voter) == 1,
-            "Should be a member first"
-        );
-        console.log("hello", _tokenDepartments[voter]);
-        return _tokenDepartments[voter];
+    function nullDepartment(
+        string calldata department
+    ) external view returns (bool) {
+        return AllDepartments[department];
+    }
+
+    function returnDepartment(
+        address voter
+    ) external view returns (string memory) {
+        require(balanceOf(voter) == 1, "Should be a member first");
+        return TokenDepartment[voter];
     }
 
     function tokenURI(

@@ -12,6 +12,7 @@ contract FundAllocation {
     error FundAllocation_InvalidProposal();
     error FundAllocation_InactiveProposal();
     error FundAllocation_AlreadyVoted();
+    error FundAllocation_NoSuchDepartment();
     string private constant NULL = "";
     enum Vote {
         yes,
@@ -107,10 +108,13 @@ contract FundAllocation {
             _deadline > block.timestamp,
             "The deadline should be in the future"
         );
+        if (token.nullDepartment(_department) != true) {
+            revert FundAllocation_NoSuchDepartment();
+        }
         if (keccak256(bytes(_department)) == keccak256(bytes(NULL))) {
-            proposal.concernedDepartment = _department;
-        } else {
             proposal.concernedDepartment = NULL;
+        } else {
+            proposal.concernedDepartment = _department;
         }
         proposal.proposer = _proposer;
         proposal.amount = _amount;
@@ -138,14 +142,13 @@ contract FundAllocation {
         proposal.totalVoters++;
         Vote vote = flag == true ? Vote.yes : Vote.no;
         proposal.voters[voter] = true;
-        console.log(token.returnDepartment(voter));
-        console.log(proposal.concernedDepartment);
         if (vote == Vote.yes) {
             if (
                 keccak256(bytes(token.returnDepartment(voter))) ==
                 keccak256(bytes(proposal.concernedDepartment))
             ) {
-                proposal.yesCount += 2;
+                console.log("yay");
+                proposal.yesCount += 1;
             } else {
                 proposal.yesCount++;
             }
@@ -154,7 +157,7 @@ contract FundAllocation {
                 keccak256(bytes(token.returnDepartment(voter))) ==
                 keccak256(bytes(proposal.concernedDepartment))
             ) {
-                proposal.noCount += 2;
+                proposal.noCount += 1;
             } else {
                 proposal.noCount++;
             }
@@ -207,6 +210,7 @@ contract FundAllocation {
             proposal.yesCount > proposal.noCount,
             "Not enough members accepted the proposal"
         );
+        console.log("yes count =>", proposal.yesCount);
         (bool success, ) = payable(proposal.recepient).call{
             value: proposal.amount
         }("no");
