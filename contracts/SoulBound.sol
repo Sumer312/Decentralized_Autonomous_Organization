@@ -9,17 +9,32 @@ import {console} from "hardhat/console.sol";
 
 contract SoulBound is ERC721, ERC721URIStorage, Ownable {
     uint256 private _nextTokenId;
+    mapping(address => string) private _tokenDepartments;
+    mapping(string => bool) private _allDepartments;
 
     event Attest(address to, uint tokenId);
     event Revoke(address to, uint tokenId);
 
     constructor(
         address initialOwner
-    ) ERC721("SoulBound", "SBT") Ownable(initialOwner) {}
+    ) ERC721("SoulBound", "SBT") Ownable(initialOwner) {
+      _allDepartments["IT"] = true;
+      _allDepartments["CIVIL"] = true;
+      _allDepartments["CSE"] = true;
+      _allDepartments["MECH"] = true;
+      _allDepartments["ECE"] = true;
+      _allDepartments["AIML"] = true;
+    }
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        console.log(msg.sender);
-        console.log(to);
+    function safeMint(
+        address to,
+        string memory uri,
+        string memory department
+    ) public onlyOwner {
+        require(
+          _allDepartments[department] == true,
+            "No such department"
+        );
         require(
             balanceOf(to) == 0,
             "SBT can only be minted once for one address"
@@ -27,6 +42,16 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+        _tokenDepartments[to] = department;
+    }
+
+    function returnDepartment(address voter) external view returns (string memory) {
+        require(
+            balanceOf(voter) == 1,
+            "Should be a member first"
+        );
+        console.log("hello", _tokenDepartments[voter]);
+        return _tokenDepartments[voter];
     }
 
     function tokenURI(

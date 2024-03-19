@@ -12,7 +12,7 @@ contract FundAllocation {
     error FundAllocation_InvalidProposal();
     error FundAllocation_InactiveProposal();
     error FundAllocation_AlreadyVoted();
-
+    string private constant NULL = "";
     enum Vote {
         yes,
         no
@@ -21,12 +21,12 @@ contract FundAllocation {
     SoulBound private token;
     struct Proposal {
         address proposer;
+        address payable recepient;
         uint amount;
+        uint deadline;
         string title;
         string description;
-        uint deadline;
-        uint amountCollected;
-        address payable recepient;
+        string concernedDepartment;
         bool isActive;
         bool isCompleted;
         uint yesCount;
@@ -98,6 +98,7 @@ contract FundAllocation {
         uint _amount,
         string calldata _title,
         string calldata _description,
+        string calldata _department,
         uint _deadline,
         address payable _recepient
     ) external returns (uint) {
@@ -106,6 +107,11 @@ contract FundAllocation {
             _deadline > block.timestamp,
             "The deadline should be in the future"
         );
+        if (keccak256(bytes(_department)) == keccak256(bytes(NULL))) {
+            proposal.concernedDepartment = _department;
+        } else {
+            proposal.concernedDepartment = NULL;
+        }
         proposal.proposer = _proposer;
         proposal.amount = _amount;
         proposal.deadline = _deadline;
@@ -132,10 +138,26 @@ contract FundAllocation {
         proposal.totalVoters++;
         Vote vote = flag == true ? Vote.yes : Vote.no;
         proposal.voters[voter] = true;
+        console.log(token.returnDepartment(voter));
+        console.log(proposal.concernedDepartment);
         if (vote == Vote.yes) {
-            proposal.yesCount++;
+            if (
+                keccak256(bytes(token.returnDepartment(voter))) ==
+                keccak256(bytes(proposal.concernedDepartment))
+            ) {
+                proposal.yesCount += 2;
+            } else {
+                proposal.yesCount++;
+            }
         } else if (vote == Vote.no) {
-            proposal.noCount++;
+            if (
+                keccak256(bytes(token.returnDepartment(voter))) ==
+                keccak256(bytes(proposal.concernedDepartment))
+            ) {
+                proposal.noCount += 2;
+            } else {
+                proposal.noCount++;
+            }
         }
     }
 

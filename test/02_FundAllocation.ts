@@ -21,7 +21,7 @@ describe("Fund Allocation", function() {
     accounts = await ethers.getSigners();
     sbt = await soulbound.deploy(accounts[0].address);
     for (let index = 0; index < 7; index++) {
-      await sbt.safeMint(accounts[index].address, index);
+      await sbt.safeMint(accounts[index].address, index, "IT");
     }
     sender = accounts[0].address;
     eth = ethers.utils.parseEther('2')
@@ -38,7 +38,7 @@ describe("Fund Allocation", function() {
       value: ethers.utils.parseEther("10")
     });
     console.log(`creating a proposal {\n sender : ${sender},\n amount : ${eth},\n title : ${title},\n description : ${description},\n deadline : ${deadline},\n reciever : ${reciever}\n}`);
-    const proposal = await fund.createProposal(sender, eth, title, description, deadline, reciever);
+    const proposal = await fund.createProposal(sender, eth, title, description, "IT", deadline, reciever);
     await fund.activateProposal(await proposal.value);
     await fund.voteProposal(accounts[2].address, await proposal.value, true)
     await fund.voteProposal(accounts[1].address, await proposal.value, true)
@@ -54,7 +54,7 @@ describe("Fund Allocation", function() {
       value: ethers.utils.parseEther("10")
     });
     console.log(`creating a proposal {\n sender : ${sender},\n amount : ${eth},\n title : ${title},\n description : ${description},\n deadline : ${deadline},\n reciever : ${reciever}\n}`);
-    const proposal = await fund.createProposal(sender, eth, title, description, deadline, reciever);
+    const proposal = await fund.createProposal(sender, eth, title, description, "IT", deadline, reciever);
     await fund.activateProposal(await proposal.value);
     await fund.voteProposal(accounts[4].address, await proposal.value, true)
     await fund.voteProposal(accounts[5].address, await proposal.value, false)
@@ -73,7 +73,7 @@ describe("Fund Allocation", function() {
       value: ethers.utils.parseEther("10")
     });
     console.log(`creating a proposal {\n sender : ${sender},\n amount : ${eth},\n title : ${title},\n description : ${description},\n deadline : ${deadline},\n reciever : ${reciever}\n}`);
-    const proposal = await fund.createProposal(sender, eth, title, description, deadline, reciever);
+    const proposal = await fund.createProposal(sender, eth, title, description, "IT", deadline, reciever);
     await fund.activateProposal(await proposal.value);
     try {
       await fund.voteProposal(accounts[8].address, await proposal.value, true)

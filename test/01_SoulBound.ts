@@ -10,13 +10,13 @@ describe("SoulBound", function() {
   })
   it("testing for mint", async function() {
     const token = await sbt.deploy(accounts[0].address);
-    await token.safeMint(accounts[1].address, "123");
+    await token.safeMint(accounts[1].address, "123", "IT");
     expect(await token.balanceOf(accounts[1].address)).to.equal(1)
 
   }),
     it("testing for transfer", async function() {
       const token = await sbt.deploy(accounts[0].address);
-      await token.safeMint(accounts[1].address, "123");
+      await token.safeMint(accounts[1].address, "123", "IT");
       try {
         await token.transferFrom(accounts[1].address, accounts[3].address, "123");
       } catch (error) {
