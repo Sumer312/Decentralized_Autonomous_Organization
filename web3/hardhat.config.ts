@@ -11,6 +11,7 @@ const config: HardhatUserConfig = {
     localhost: {
       chainId: 31337,
       allowUnlimitedContractSize: true,
+      url: "http://127.0.0.1:8545"
     }
   },
   solidity: "0.8.20",

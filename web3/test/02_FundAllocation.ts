@@ -84,4 +84,17 @@ describe("Fund Allocation", function() {
       expect(await accounts[1].getBalance()).to.equal(ethers.utils.parseEther("10002"));
     }
   })
+
+  it("Contract should list proposals", async function() {
+    const fund = await fa.deploy(sbt.address);
+    await accounts[0].sendTransaction({
+      to: fund.address,
+      value: ethers.utils.parseEther("10")
+    });
+    console.log(`creating a proposal {\n sender : ${sender},\n amount : ${eth},\n title : ${title},\n description : ${description},\n deadline : ${deadline},\n reciever : ${reciever}\n}`);
+    const proposal = await fund.createProposal(sender, eth, title, description, "IT", deadline, reciever);
+    const list = await fund.listProposals();
+    console.log(list);
+  })
+
 })

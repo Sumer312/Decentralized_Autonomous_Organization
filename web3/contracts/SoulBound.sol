@@ -11,9 +11,10 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
     uint256 private nextTokenId;
     mapping(address => string) private TokenDepartment;
     mapping(string => bool) private AllDepartments;
+    mapping(address => bool) private balances;
 
     event Attest(address to, uint tokenId);
-    event Revoke(address to, uint tokenId);
+    event Burn(address to, uint tokenId);
 
     constructor(
         address initialOwner
@@ -31,15 +32,29 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
         string memory uri,
         string memory department
     ) public onlyOwner {
+        /* require(to != msg.sender, "you can't mint an SBT for yourself"); */
         require(AllDepartments[department] == true, "No such department");
         require(
             balanceOf(to) == 0,
             "SBT can only be minted once for one address"
         );
+        console.log(to);
         uint256 tokenId = nextTokenId++;
-        _safeMint(to, tokenId);
+        balances[to] = true;
+        _mint(to, tokenId);
         _setTokenURI(tokenId, uri);
         TokenDepartment[to] = department;
+    }
+
+    function balanceOf(
+        address caller
+    ) public view override(ERC721, IERC721) returns (uint256) {
+      console.log(block.number);
+      console.log(caller , "=>",  balances[caller]);
+        if (balances[caller] == false) {
+            return 0;
+        }
+        return 1;
     }
 
     function nullDepartment(
@@ -48,7 +63,7 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
         return AllDepartments[department];
     }
 
-    function returnDepartment(
+    function departmentOf(
         address voter
     ) external view returns (string memory) {
         require(balanceOf(voter) == 1, "Should be a member first");
@@ -73,22 +88,19 @@ contract SoulBound is ERC721, ERC721URIStorage, Ownable {
         uint tokenId
     ) public override(ERC721, IERC721) onlyOwner {
         require(
-            from == address(0) || to == address(0),
+            from == msg.sender && to == address(0),
             "You can't transfer this token"
         );
-        if (from == address(0)) {
-            emit Attest(to, tokenId);
-        } else if (to == address(0)) {
-            emit Revoke(to, tokenId);
-        }
+        require(ownerOf(tokenId) == msg.sender, "Only owner can burn token");
+        emit Burn(to, tokenId);
+        balances[msg.sender] = false;
+        _burn(tokenId);
     }
 
     function burn(uint tokenId) external onlyOwner {
         require(ownerOf(tokenId) == msg.sender, "Only owner can burn token");
-        _burn(tokenId);
-    }
-
-    function revoke(uint tokenId) external {
+        balances[msg.sender] = false;
+        emit Burn(msg.sender, tokenId);
         _burn(tokenId);
     }
 }

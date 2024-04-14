@@ -32,6 +32,19 @@ contract Voting {
         mapping(address => bool) voters;
     }
 
+    struct ProposalExternalList {
+        uint id;
+        address proposer;
+        uint deadline;
+        string title;
+        string description;
+        bool isActive;
+        bool isCompleted;
+        uint yesCount;
+        uint noCount;
+        uint totalVoters;
+    }
+
     Proposal[] public proposals;
 
     uint public n_proposals = 0;
@@ -157,5 +170,31 @@ contract Voting {
         );
         proposal.isActive = false;
         proposal.isCompleted = true;
+    }
+
+    function listProposals()
+        external
+        view
+        returns (ProposalExternalList[] memory)
+    {
+        ProposalExternalList[] memory list = new ProposalExternalList[](
+            n_proposals
+        );
+        for (uint i = 0; i < n_proposals; i++) {
+            Proposal storage temp = proposals[i];
+            list[i] = ProposalExternalList(
+                i,
+                temp.proposer,
+                temp.deadline,
+                temp.title,
+                temp.description,
+                temp.isActive,
+                temp.isCompleted,
+                temp.yesCount,
+                temp.noCount,
+                temp.totalVoters
+            );
+        }
+        return list;
     }
 }

@@ -36,6 +36,22 @@ contract FundAllocation {
         mapping(address => bool) voters;
     }
 
+    struct ProposalExternalList {
+        uint id;
+        address proposer;
+        address payable recepient;
+        uint amount;
+        uint deadline;
+        string title;
+        string description;
+        string concernedDepartment;
+        bool isActive;
+        bool isCompleted;
+        uint yesCount;
+        uint noCount;
+        uint totalVoters;
+    }
+
     constructor(address member) payable {
         token = SoulBound(member);
     }
@@ -144,22 +160,21 @@ contract FundAllocation {
         proposal.voters[voter] = true;
         if (vote == Vote.yes) {
             if (
-                keccak256(bytes(token.returnDepartment(voter))) ==
+                keccak256(bytes(token.departmentOf(voter))) ==
                 keccak256(bytes(proposal.concernedDepartment))
             ) {
-                console.log("yay");
-                proposal.yesCount += 1;
+                proposal.yesCount += 12;
             } else {
-                proposal.yesCount++;
+                proposal.yesCount += 10;
             }
         } else if (vote == Vote.no) {
             if (
-                keccak256(bytes(token.returnDepartment(voter))) ==
+                keccak256(bytes(token.departmentOf(voter))) ==
                 keccak256(bytes(proposal.concernedDepartment))
             ) {
-                proposal.noCount += 1;
+                proposal.noCount += 12;
             } else {
-                proposal.noCount++;
+                proposal.noCount += 10;
             }
         }
     }
@@ -178,8 +193,6 @@ contract FundAllocation {
         );
         uint threeDays = block.timestamp + 3 * 86400;
         uint twoDays = block.timestamp + 2 * 86400;
-        console.log(twoDays);
-        console.log(block.timestamp);
         require(
             proposal.deadline < twoDays || proposal.deadline > threeDays,
             "Proposal not in activation period"
@@ -210,7 +223,6 @@ contract FundAllocation {
             proposal.yesCount > proposal.noCount,
             "Not enough members accepted the proposal"
         );
-        console.log("yes count =>", proposal.yesCount);
         (bool success, ) = payable(proposal.recepient).call{
             value: proposal.amount
         }("no");
@@ -219,5 +231,34 @@ contract FundAllocation {
         }
         proposal.isActive = false;
         proposal.isCompleted = true;
+    }
+
+    function listProposals()
+        external
+        view
+        returns (ProposalExternalList[] memory)
+    {
+        ProposalExternalList[] memory list = new ProposalExternalList[](
+            n_proposals
+        );
+        for (uint i = 0; i < n_proposals; i++) {
+            Proposal storage temp = proposals[i];
+            list[i] = ProposalExternalList(
+                i,
+                temp.proposer,
+                temp.recepient,
+                temp.amount,
+                temp.deadline,
+                temp.title,
+                temp.description,
+                temp.concernedDepartment,
+                temp.isActive,
+                temp.isCompleted,
+                temp.yesCount,
+                temp.noCount,
+                temp.totalVoters
+            );
+        }
+        return list;
     }
 }
