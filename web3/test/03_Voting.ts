@@ -27,7 +27,7 @@ describe("Voting", function() {
   it("Voting proposal should be accepted", async function() {
     const vote = await voting.deploy(sbt.address);
     console.log(`creating a voting proposal {\n caller : ${accounts[0].address},\n title : ${title},\n description : ${description},\n deadline : ${deadline}\n}`);
-    const proposal = await vote.createProposal(accounts[0].address, title, description, deadline);
+    const proposal = await vote.createProposal(title, description, deadline);
     await vote.activateProposal(await proposal.value);
     await vote.voteProposal(accounts[2].address, await proposal.value, true)
     await vote.voteProposal(accounts[1].address, await proposal.value, true)
@@ -38,7 +38,7 @@ describe("Voting", function() {
   it("Voting proposal should be declined", async function() {
     const vote = await voting.deploy(sbt.address);
     console.log(`creating a voting proposal {\n caller : ${accounts[0].address},\n title : ${title},\n description : ${description},\n deadline : ${deadline}\n}`);
-    const proposal = await vote.createProposal(accounts[0].address, title, description, deadline);
+    const proposal = await vote.createProposal(title, description, deadline);
     await vote.activateProposal(await proposal.value);
     await vote.voteProposal(accounts[4].address, await proposal.value, true)
     await vote.voteProposal(accounts[5].address, await proposal.value, false)
@@ -53,7 +53,7 @@ describe("Voting", function() {
   it("Voting proposal should throw error", async function() {
     const vote = await voting.deploy(sbt.address);
     console.log(`creating a voting proposal {\n caller : ${accounts[0].address},\n title : ${title},\n description : ${description},\n deadline : ${deadline}\n}`);
-    const proposal = await vote.createProposal(accounts[0].address, title, description, deadline);
+    const proposal = await vote.createProposal(title, description, deadline);
     await vote.activateProposal(await proposal.value);
     try {
       await vote.voteProposal(accounts[8].address, await proposal.value, true)

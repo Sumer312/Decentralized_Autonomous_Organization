@@ -20,6 +20,7 @@ contract FundAllocation {
     }
 
     SoulBound private token;
+
     struct Proposal {
         address proposer;
         address payable recepient;
@@ -33,8 +34,10 @@ contract FundAllocation {
         uint yesCount;
         uint noCount;
         uint totalVoters;
-        mapping(address => bool) voters;
     }
+
+    mapping(uint256 => mapping(address => bool))
+        private vote_on_proposal_by_address;
 
     struct ProposalExternalList {
         uint id;
@@ -60,7 +63,7 @@ contract FundAllocation {
         console.log(address(this).balance);
     }
 
-    mapping(uint => Proposal) public proposals;
+    Proposal[] public proposals;
 
     uint public n_proposals = 0;
 
@@ -90,7 +93,7 @@ contract FundAllocation {
     }
 
     modifier newVoter(address voter, uint proposalId) {
-        if (proposals[proposalId].voters[voter] == true) {
+        if (vote_on_proposal_by_address[proposalId][voter] == true) {
             revert FundAllocation_AlreadyVoted();
         }
         _;
@@ -111,7 +114,6 @@ contract FundAllocation {
     }
 
     function createProposal(
-        address _proposer,
         uint _amount,
         string calldata _title,
         string calldata _description,
@@ -119,7 +121,7 @@ contract FundAllocation {
         uint _deadline,
         address payable _recepient
     ) external returns (uint) {
-        Proposal storage proposal = proposals[n_proposals];
+        string memory _concernedDepartment;
         require(
             _deadline > block.timestamp,
             "The deadline should be in the future"
@@ -128,16 +130,27 @@ contract FundAllocation {
             revert FundAllocation_NoSuchDepartment();
         }
         if (keccak256(bytes(_department)) == keccak256(bytes(NULL))) {
-            proposal.concernedDepartment = NULL;
+            _concernedDepartment = NULL;
         } else {
-            proposal.concernedDepartment = _department;
+            _concernedDepartment = _department;
         }
-        proposal.proposer = _proposer;
-        proposal.amount = _amount;
-        proposal.deadline = _deadline;
-        proposal.title = _title;
-        proposal.description = _description;
-        proposal.recepient = _recepient;
+
+        proposals.push(
+            Proposal(
+                msg.sender,
+                _recepient,
+                _amount,
+                _deadline,
+                _title,
+                _description,
+                _concernedDepartment,
+                false,
+                false,
+                0,
+                0,
+                0
+            )
+        );
         n_proposals++;
         return n_proposals - 1;
     }
@@ -157,7 +170,7 @@ contract FundAllocation {
         Proposal storage proposal = proposals[proposalId];
         proposal.totalVoters++;
         Vote vote = flag == true ? Vote.yes : Vote.no;
-        proposal.voters[voter] = true;
+        vote_on_proposal_by_address[proposalId][voter] = true;
         if (vote == Vote.yes) {
             if (
                 keccak256(bytes(token.departmentOf(voter))) ==

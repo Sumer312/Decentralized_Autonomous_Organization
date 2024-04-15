@@ -29,7 +29,6 @@ contract Voting {
         uint totalVoters;
         bool isActive;
         bool isCompleted;
-        mapping(address => bool) voters;
     }
 
     struct ProposalExternalList {
@@ -45,15 +44,21 @@ contract Voting {
         uint totalVoters;
     }
 
+    mapping(uint256 => mapping(address => bool))
+        private vote_on_proposal_by_address;
+
     Proposal[] public proposals;
 
-    uint public n_proposals = 0;
+    uint256 public n_proposals = 0;
 
     constructor(address member) {
         token = SoulBound(member);
     }
 
     modifier onlyMembers1() {
+        console.log("this is the sender", msg.sender);
+        console.log("balance bbc", token.balanceOf(msg.sender));
+        console.log("this is where it is failing ig");
         if (token.balanceOf(msg.sender) <= 0) {
             revert Voting_NotAMember();
         }
@@ -68,7 +73,7 @@ contract Voting {
     }
 
     modifier newVoter(uint proposalId, address voter) {
-        if (proposals[proposalId].voters[voter] == true) {
+        if (vote_on_proposal_by_address[proposalId][voter] == true) {
             revert Voting_AlreadyVoted();
         }
         _;
@@ -93,16 +98,24 @@ contract Voting {
     }
 
     function createProposal(
-        address _proposer,
         string calldata _title,
         string calldata _description,
         uint _deadline
-    ) external onlyMembers1 returns (uint) {
-        Proposal storage proposal = proposals.push();
-        proposal.proposer = _proposer;
-        proposal.title = _title;
-        proposal.description = _description;
-        proposal.deadline = _deadline;
+    ) external onlyMembers1 returns (uint256) {
+        console.log("bebebebe");
+        proposals.push(
+            Proposal(
+                msg.sender,
+                _title,
+                _description,
+                _deadline,
+                0,
+                0,
+                0,
+                false,
+                false
+            )
+        );
         n_proposals++;
         return n_proposals - 1;
     }
@@ -120,7 +133,7 @@ contract Voting {
         activeProposal(proposalId)
     {
         Proposal storage proposal = proposals[proposalId];
-        proposal.voters[voter] = true;
+        vote_on_proposal_by_address[proposalId][voter] = true;
         proposal.totalVoters++;
         Vote vote = flag == true ? Vote.yes : Vote.no;
         if (vote == Vote.yes) {
