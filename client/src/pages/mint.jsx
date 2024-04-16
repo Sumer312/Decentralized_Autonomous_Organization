@@ -3,6 +3,7 @@ import addresses from "../utils/contract_addresses"
 import soulbound from "../../../web3/artifacts/contracts/SoulBound.sol/SoulBound.json"
 import accounts from "../utils/accounts"
 import Web3 from 'web3';
+import Navbar from "../components/navbar"
 
 const Mint = () => {
   const [contract, setContract] = createSignal(null);
@@ -29,8 +30,11 @@ const Mint = () => {
 
   return (
     <div>
-      <input type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
-      <button onClick={() => mint(address())}>Mint</button>
+      <Navbar />
+      <form class="flex flex-col items-center gap-2" data-theme="luxury">
+      <input class="input input-bordered input-lg input-accent w-96 max-w-2xl" type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
+      <button class="btn btn-accent btn-outline btn-lg max-w-2xl w-96" onClick={() => mint(address())}>Mint</button>
+      </form>
     </div>
   );
 };

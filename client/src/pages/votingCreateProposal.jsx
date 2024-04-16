@@ -23,9 +23,9 @@ const CreateVotingProposal = () => {
 
   const createProposal = async () => {
     if (contract()) {
-      /* const deadline_date = new Date(deadline()) */
-      /* const uint_deadline = BigInt(deadline_date.getTime() / 1000) */
-      const result = await contract().methods.createProposal('hi', 'hi', 145n).send({ from: accounts[0] })
+      const deadline_date = new Date(deadline())
+      const uint_deadline = BigInt(deadline_date.getTime() / 1000)
+      const result = await contract().methods.createProposal(title(), description(), uint_deadline).send({ from: accounts[0] })
       console.log('Result:', result);
     }
   };
