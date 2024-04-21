@@ -274,4 +274,26 @@ contract FundAllocation {
         }
         return list;
     }
+
+    function getProposalById(
+        uint256 proposalId
+    ) external view returns (ProposalExternalList memory) {
+        Proposal storage temp = proposals[proposalId];
+        return
+            ProposalExternalList(
+                proposalId,
+                temp.proposer,
+                temp.recepient,
+                temp.amount,
+                temp.deadline,
+                temp.title,
+                temp.description,
+                temp.concernedDepartment,
+                temp.isActive,
+                temp.isCompleted,
+                temp.yesCount,
+                temp.noCount,
+                temp.totalVoters
+            );
+    }
 }

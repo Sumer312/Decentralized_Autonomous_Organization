@@ -3,7 +3,7 @@ import addresses from "../utils/contract_addresses"
 import soulbound from "../../../web3/artifacts/contracts/SoulBound.sol/SoulBound.json"
 import accounts from "../utils/accounts"
 import Web3 from 'web3';
-import Navbar from "../components/navbar"
+import toast from 'solid-toast';
 
 const Mint = () => {
   const [contract, setContract] = createSignal(null);
@@ -23,17 +23,23 @@ const Mint = () => {
   const mint = async (account) => {
     if (contract() && account !== null) {
       const result = await contract().methods.safeMint(account, "123", "IT").send({ from: accounts[0] })
-      console.log('Result:', result);
+      if (result.transactionHash !== null) {
+        console.log('Result:', result);
+        toast("hi")
+      }
+      console.log('Result:', result.transactionHash);
     }
   };
 
 
   return (
     <div>
-      <Navbar />
-      <form class="flex flex-col items-center gap-2" data-theme="luxury">
-      <input class="input input-bordered input-lg input-accent w-96 max-w-2xl" type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
-      <button class="btn btn-accent btn-outline btn-lg max-w-2xl w-96" onClick={() => mint(address())}>Mint</button>
+      <form class="flex flex-col items-center gap-2">
+        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
+        <button class="btn btn-primary btn-outline btn-lg max-w-2xl w-96" onClick={(event) => {
+          event.preventDefault()
+          mint(address())
+        }}>Mint</button>
       </form>
     </div>
   );

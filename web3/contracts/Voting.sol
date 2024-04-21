@@ -102,7 +102,6 @@ contract Voting {
         string calldata _description,
         uint _deadline
     ) external onlyMembers1 returns (uint256) {
-        console.log("bebebebe");
         proposals.push(
             Proposal(
                 msg.sender,
@@ -209,5 +208,24 @@ contract Voting {
             );
         }
         return list;
+    }
+
+    function getProposalById(
+        uint256 proposalId
+    ) external view returns (ProposalExternalList memory) {
+        Proposal storage temp = proposals[proposalId];
+        return
+            ProposalExternalList(
+                proposalId,
+                temp.proposer,
+                temp.deadline,
+                temp.title,
+                temp.description,
+                temp.isActive,
+                temp.isCompleted,
+                temp.yesCount,
+                temp.noCount,
+                temp.totalVoters
+            );
     }
 }

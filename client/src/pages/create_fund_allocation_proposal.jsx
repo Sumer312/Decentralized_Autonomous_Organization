@@ -37,21 +37,21 @@ const CreateFundAllocationProposal = () => {
 
   return (
     <div>
-      <form>
-        <input type='text' placeholder='Title' onChange={event => setTitle(event.target.value)} />
-        <input type='number' placeholder='Amount' onChange={event => setAmount(event.target.value)} />
-        <input type='text' placeholder='Recipient address' onChange={event => setRecipientAddress(event.target.value)} />
-        <input type='date' placeholder='Deadline' onChange={event => setDeadline(event.target.value)} />
-        <textarea rows='5' placeholder='Description' onChange={event => setDescription(event.target.value)} />
-        <label for="department"> Department </label>
-        <select name="department" onChange={event => setDepartment(event.target.value)} >
+      <form class="flex flex-col items-center gap-2">
+        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' placeholder='Title' onChange={event => setTitle(event.target.value)} />
+        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='number' placeholder='Amount' onChange={event => setAmount(event.target.value)} />
+        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' placeholder='Recipient address' onChange={event => setRecipientAddress(event.target.value)} />
+        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='date' placeholder='Deadline' onChange={event => setDeadline(event.target.value)} />
+        <textarea class="textarea textarea-primary w-96 max-w-2xl text-lg" rows='5' placeholder='Description' onChange={event => setDescription(event.target.value)} />
+        <span class="label-text">Department</span>
+        <select class="select select-primary w-96 max-w-2xl" name="department" onChange={event => setDepartment(event.target.value)} >
           <option value="IT"> IT </option>
           <option value="CIVIL"> CIVIL </option>
           <option value="CSE"> CSE </option>
           <option value="ECE"> ECE </option>
           <option value="AIML"> AIML </option>
         </select>
-        <button type="submit" onClick={createProposal}> submit </button>
+        <button class="btn btn-primary btn-outline btn-lg max-w-2xl w-96" type="submit" onClick={createProposal}> Submit </button>
       </form>
     </div>
   );

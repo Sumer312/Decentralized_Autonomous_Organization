@@ -5,7 +5,7 @@ import Web3 from 'web3';
 
 const BalanceOf = () => {
   const [contract, setContract] = createSignal(null);
-  const contractAddress =  addresses.soulbound
+  const contractAddress = addresses.soulbound
   const web3 = new Web3('http://127.0.0.1:8545');
   const [address, setAddress] = createSignal()
   const abi = soulbound.abi;
@@ -26,10 +26,10 @@ const BalanceOf = () => {
   };
 
   return (
-    <div>
-      <input type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
-      <button onClick={() => balanceOf(address())}>Balance Of</button>
-    </div>
+    <form class="flex flex-col items-center gap-2">
+      <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
+      <button class="btn btn-primary btn-outline btn-lg max-w-2xl w-96" onClick={() => balanceOf(address())}>Balance Of</button>
+    </form>
   );
 };
 
