@@ -8,6 +8,10 @@ async function main() {
   const t1 = await soulbound.deploy(accounts[0].address)
   const t2 = await fundalloc.deploy(t1.address)
   const t3 = await voting.deploy(t1.address)
+  await accounts[0].sendTransaction({
+    to: t2.address,
+    value: ethers.utils.parseEther("10")
+  });
   console.log(t1.address)
   console.log(t2.address)
   console.log(t3.address)

@@ -118,7 +118,7 @@ contract FundAllocation {
         string calldata _title,
         string calldata _description,
         string calldata _department,
-        uint _deadline,
+        uint256 _deadline,
         address payable _recepient
     ) external returns (uint) {
         string memory _concernedDepartment;

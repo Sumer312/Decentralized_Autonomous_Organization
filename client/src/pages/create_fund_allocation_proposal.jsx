@@ -26,34 +26,34 @@ const CreateFundAllocationProposal = () => {
 
   const createProposal = async () => {
     if (contract()) {
-      try {
-        const result = await contract().methods.createProposal(accounts[0], amount, title, description, department, deadline, recipient_address).send({ from: accounts[0] })
-        console.log('Result:', result);
-      } catch (error) {
-        console.error('Error:', error);
-      }
+      console.log(department())
+      const deadline_date = new Date(deadline())
+      const uint_deadline = BigInt(deadline_date.getTime() / 1000)
+      const result = await contract().methods.createProposal(amount(), title(), description(), department(), uint_deadline, recipient_address()).send({ from: accounts[0] })
+      console.log('Result:', result);
     }
   };
 
   return (
-    <div>
-      <form class="flex flex-col items-center gap-2">
-        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' placeholder='Title' onChange={event => setTitle(event.target.value)} />
-        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='number' placeholder='Amount' onChange={event => setAmount(event.target.value)} />
-        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' placeholder='Recipient address' onChange={event => setRecipientAddress(event.target.value)} />
-        <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='date' placeholder='Deadline' onChange={event => setDeadline(event.target.value)} />
-        <textarea class="textarea textarea-primary w-96 max-w-2xl text-lg" rows='5' placeholder='Description' onChange={event => setDescription(event.target.value)} />
-        <span class="label-text">Department</span>
-        <select class="select select-primary w-96 max-w-2xl" name="department" onChange={event => setDepartment(event.target.value)} >
-          <option value="IT"> IT </option>
-          <option value="CIVIL"> CIVIL </option>
-          <option value="CSE"> CSE </option>
-          <option value="ECE"> ECE </option>
-          <option value="AIML"> AIML </option>
-        </select>
-        <button class="btn btn-primary btn-outline btn-lg max-w-2xl w-96" type="submit" onClick={createProposal}> Submit </button>
-      </form>
-    </div>
+    <form class="flex flex-col items-center gap-2 mt-24">
+      <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' placeholder='Title' onChange={event => setTitle(event.target.value)} />
+      <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='number' placeholder='Amount' onChange={event => setAmount(event.target.value)} />
+      <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='text' placeholder='Recipient address' onChange={event => setRecipientAddress(event.target.value)} />
+      <input class="input input-bordered input-lg input-primary w-96 max-w-2xl" type='date' placeholder='Deadline' onChange={event => setDeadline(event.target.value)} />
+      <textarea class="textarea textarea-primary w-96 max-w-2xl text-lg" rows='5' placeholder='Description' onChange={event => setDescription(event.target.value)} />
+      <select class="select select-primary w-96 max-w-2xl" name="department" onChange={event => setDepartment(event.target.value)} >
+        <option selected disabled>Department</option>
+        <option value="IT"> IT </option>
+        <option value="CIVIL"> CIVIL </option>
+        <option value="CSE"> CSE </option>
+        <option value="ECE"> ECE </option>
+        <option value="AIML"> AIML </option>
+      </select>
+      <button class="btn btn-primary btn-outline btn-lg max-w-2xl w-96" type="submit" onClick={(event) => {
+        event.preventDefault()
+        createProposal()
+      }}> Submit </button>
+    </form>
   );
 };
 

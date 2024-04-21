@@ -13,6 +13,14 @@ const ListVotingProposals = () => {
   const abi = voting.abi;
   const navigate = useNavigate()
 
+  const listProposals = async () => {
+    if (contract()) {
+      const result = await contract().methods.listProposals().call()
+      console.log(result)
+      setProposals(result)
+    }
+  };
+
   createEffect(() => {
     if (web3 && contractAddress && abi.length > 0) {
       const provider = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"))
@@ -21,14 +29,6 @@ const ListVotingProposals = () => {
       listProposals()
     }
   }, [abi]);
-
-  const listProposals = async () => {
-    if (contract()) {
-      const result = await contract().methods.listProposals().call()
-      console.log(result)
-      setProposals(result)
-    }
-  };
 
   return (
     <div class="flex p-12 gap-8">

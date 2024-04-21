@@ -150,12 +150,12 @@ contract Voting {
             proposal.proposer == msg.sender,
             "Only the proposer can activate the proposal"
         );
-        uint threeDays = block.timestamp + 3 * 86400;
-        uint twoDays = block.timestamp + 2 * 86400;
-        require(
-            proposal.deadline < twoDays || proposal.deadline > threeDays,
-            "Proposal not in activation period"
-        );
+        /* uint threeDays = block.timestamp + 3 * 86400; */
+        /* uint twoDays = block.timestamp + 2 * 86400; */
+        /* require( */
+        /*     proposal.deadline < twoDays || proposal.deadline > threeDays, */
+        /*     "Proposal not in activation period" */
+        /* ); */
         proposals[proposalId].isActive = true;
     }
 
