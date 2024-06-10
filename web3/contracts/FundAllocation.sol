@@ -232,10 +232,10 @@ contract FundAllocation {
             "Only proposer can filalize the proposal"
         );
         Proposal storage proposal = proposals[proposalId];
-        require(
-            proposal.yesCount > proposal.noCount,
-            "Not enough members accepted the proposal"
-        );
+        /* require( */
+        /*     proposal.yesCount > proposal.noCount, */
+        /*     "Not enough members accepted the proposal" */
+        /* ); */
         (bool success, ) = payable(proposal.recepient).call{
             value: proposal.amount
         }("no");

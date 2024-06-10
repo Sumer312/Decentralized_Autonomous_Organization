@@ -73,7 +73,7 @@ const DisplayFundAllocationProposal = () => {
           </button>
           <div class="collapse-content">
             <div class="flex flex-col">
-              <input class="input input-bordered text-white input-lg input-accent w-72 max-w-2xl" type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
+              <input class="input input-bordered text-primary-content input-lg input-accent w-72 max-w-2xl" type='text' onChange={(e) => setAddress(e.target.value)} placeholder='Enter account address' />
               <div class="flex flex-row gap-2 mt-6">
                 <button class="btn btn-success btn-circle btn-lg" onClick={() => voteProposal(true)}>Yes</button>
                 <button class="btn btn-error btn-circle btn-lg" onClick={() => voteProposal(false)}>No</button>

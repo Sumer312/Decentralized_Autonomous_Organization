@@ -176,10 +176,10 @@ contract Voting {
             msg.sender == proposals[proposalId].proposer,
             "Only proposer can filalize the proposal"
         );
-        require(
-            proposal.yesCount > proposal.noCount,
-            "Not enough members accepted the proposal"
-        );
+        /* require( */
+        /*     proposal.yesCount > proposal.noCount, */
+        /*     "Not enough members accepted the proposal" */
+        /* ); */
         proposal.isActive = false;
         proposal.isCompleted = true;
     }
