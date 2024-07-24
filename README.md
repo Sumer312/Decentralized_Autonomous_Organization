@@ -1,6 +1,6 @@
-# <img src="https://img.icons8.com/external-vitaliy-gorbachev-lineal-color-vitaly-gorbachev/60/external-blockchain-cryptocurrency-vitaliy-gorbachev-lineal-color-vitaly-gorbachev.png" width="50" height="50"/> D.A.O.
+# <img src="https://img.icons8.com/external-vitaliy-gorbachev-lineal-color-vitaly-gorbachev/60/external-blockchain-cryptocurrency-vitaliy-gorbachev-lineal-color-vitaly-gorbachev.png" width="50" height="50"/> <br> D.A.O.
 
-<b style="font-size:1.5em;"><i>Description</i></b>\
+#### Description
 This is a personal project. This is a D.A.O.(Decentralized Autonomous Organization). Here you can be a part of an organization where the proof 
 of your identity in the organization is by owning a soulbound token or a SBT which is a modified NFT.
 If an individual has an SBT in his/her wallet then he/she is a part of the organization. 
@@ -18,7 +18,7 @@ voting power of the voter changes. If the voters department and the concerned de
 <br>
 <br>
 
-<b style="font-size:1.5em;"><i>Motivation</i></b>\
+#### Motivation
 One motivation behind this project was to create an organization on a blockchain because of the nature of blockchain and the security it provides, another 
 was to create a voting system where people who have more knowledge about a subject matter will have slightly higher (about 20% in this instance)
 voting power than those who don't, thus the organization has departments. 
@@ -26,8 +26,8 @@ In this instance of D.A.O. the organization is a college therefore the departmen
 <br>
 <br>
 
-<b style="font-size:1.5em;"><i>Desktop Interface</i></b>
-
+## Interface
+### Desktop
 *Minting Token*
 
 <img src="./screenshots/Screenshot from 2024-06-10 22-03-03.png" /> 
@@ -49,6 +49,7 @@ In this instance of D.A.O. the organization is a college therefore the departmen
 <img src="./screenshots/Screenshot from 2024-06-10 22-14-11.png" /> 
 
 *Non financial proposal creation*
+
 <img src="./screenshots/Screenshot from 2024-06-10 22-15-21.png" /> 
 
 *Non financial proposal description*
@@ -63,24 +64,24 @@ In this instance of D.A.O. the organization is a college therefore the departmen
 
 <img src="./screenshots/Screenshot from 2024-06-10 23-30-05.png" /> 
 
-<b style="font-size:1.5em;"><i>Mobile Interface</i></b>
+### Mobile
 
 <p float="left">
     <img src="./screenshots/Screenshot from 2024-06-10 22-09-11.png" width="49%"/> 
     <img src="./screenshots/Screenshot from 2024-06-10 22-09-36.png" width="49%"/> 
 </p>
 
-<b style="font-size:1.5em;"><i>Tech Stack</i></b>
-+ *Frontend*
-     - SolidJS
-     - TailwindCSS
-     - DaisyUI
-+ *SmartContract*
-     - Solidity
-+ *Tools*
-     - Makefile
-     - Hardhat
-     - Chai
-     - Mocha
-     - Ethers
-     - Web3.js
+## Tech Stack
++ **Frontend**\
+    ![SolidJS](https://img.shields.io/badge/Solid_JS-2c4f7c?style=for-the-badge&logo=solid&logoColor=fff&logoSize=auto)
+    ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white&logoSize=auto)
+    ![DaisyUI](https://img.shields.io/badge/daisyui-5A0EF8?style=for-the-badge&logo=daisyui&logoColor=white&logoSize=auto)
++ **Smart Contract**\
+    ![Solidity](https://img.shields.io/badge/Solidity-%23363636.svg?style=for-the-badge&logo=solidity&logoColor=white)
++ **Tools and Libraries**\
+    ![Ethereum](https://img.shields.io/badge/HardHat-3C3C3D?logo=ethereum&logoColor=000&style=for-the-badge&color=f7df1e)
+    ![Web3.js](https://img.shields.io/badge/Web3.js-F16822?logo=web3dotjs&logoColor=fff&style=for-the-badge&logoSize=auto)
+    ![Ethers](https://img.shields.io/badge/Ethers-2535A0?logo=ethers&logoColor=fff&style=for-the-badge&logoSize=auto)
+    ![Chai](https://img.shields.io/badge/Chai-A30701?logo=chai&logoColor=fff&style=for-the-badge&logoSize=auto)
+    ![Mocha](https://img.shields.io/badge/Mocha-8D6748?logo=mocha&logoColor=fff&style=for-the-badge&logoSize=auto)
+    ![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white&logoSize=auto)
